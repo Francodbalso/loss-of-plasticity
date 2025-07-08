@@ -3,35 +3,13 @@ import xml.etree.ElementTree as ET
 
 import gym
 from gym.utils import EzPickle
-from gym.envs.mujoco.ant import AntEnv
-from gym.envs.mujoco.ant_v3 import AntEnv as AntEnv3
+from gym.envs.mujoco.ant_v4 import AntEnv as AntEnv4
 from gym.envs.mujoco.mujoco_env import MujocoEnv
 
 
-class SlipperyAntEnv(AntEnv, MujocoEnv, EzPickle):
+class SlipperyAntEnv4(AntEnv4, MujocoEnv, EzPickle):
     """
-    SlipperyAnt-v2
-    """
-    def __init__(self, friction=1.0, xml_file='ant.xml'):
-        self.xml_file = xml_file
-        self.friction = friction
-        self.gen_xml_file()
-        MujocoEnv.__init__(self, self.xml_file, 5)
-        EzPickle.__init__(self)
-    
-    def gen_xml_file(self):
-        old_file = os.path.join(os.path.dirname(gym.envs.mujoco.ant.__file__), "assets", 'ant.xml')
-        # Parse old xml file
-        tree = ET.parse(old_file)
-        root = tree.getroot()
-        # Update friction value
-        root[3][1].attrib['friction'] = str(self.friction) + ' 0.5 0.5'
-        tree.write(self.xml_file)
-
-
-class SlipperyAntEnv3(AntEnv3, MujocoEnv, EzPickle):
-    """
-    SlipperyAnt-v3
+    SlipperyAnt-v4
     """
     def __init__(
         self,
@@ -64,7 +42,7 @@ class SlipperyAntEnv3(AntEnv3, MujocoEnv, EzPickle):
         MujocoEnv.__init__(self, self.xml_file, 5)
 
     def gen_xml_file(self):
-        old_file = os.path.join(os.path.dirname(gym.envs.mujoco.ant_v3.__file__), "assets", 'ant.xml')
+        old_file = os.path.join(os.path.dirname(gym.envs.mujoco.ant_v4.__file__), "assets", 'ant.xml')
         # Parse old xml file
         tree = ET.parse(old_file)
         root = tree.getroot()

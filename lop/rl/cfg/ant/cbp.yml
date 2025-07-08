@@ -1,4 +1,4 @@
-env_name: 'Ant-v3'
+env_name: 'SlipperyAnt-v3'
 act_type: 'ReLU'
 n_steps: 1e8
 g: 0.99
@@ -20,6 +20,6 @@ util_type_pol: 'contribution'
 beta_1: 0.99
 beta_2: 0.99
 wd: 1e-4
-dir: 'data/ant/cbp/'
-to_log: ['pol_features_activity', 'pol_weights', 'val_weights', 'stable_rank']
+dir: '/home/francodb/projects/def-dprecup/francodb/rl_research/ant_walker/data/two_frics/cbp/'
+to_log: ['pol_features_activity', 'pol_weights', 'val_weights']
 label: 'CBP'

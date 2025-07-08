@@ -168,4 +168,4 @@ class PPO(Learner):
                 change += (old_weights[idx] - layer.weight.data).abs().sum()
                 idx += 1
 
-        return {'weight_change': change}
+        return {'weight_change': change, 'advantages': advs, 'dones': dones}
