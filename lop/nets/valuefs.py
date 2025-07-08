@@ -11,11 +11,12 @@ class VF(object):
 
 
 class MLPVF(VF, nn.Module):
-    def __init__(self, o_dim, act_type='Tanh', h_dim=(50,), device='cpu', init='kaiming'):
+    def __init__(self, o_dim, act_type='Tanh', h_dim=(50,), device='cpu', init='kaiming', layernorm=False):
         super().__init__()
         self.act_type = act_type
         self.device = device
-        self.v_net = fc_body(act_type, o_dim, h_dim)
+        self.layernorm=layernorm
+        self.v_net = fc_body(act_type, o_dim, h_dim, layernorm=layernorm)
         if len(h_dim) > 0:
             self.v_net.append(nn.Linear(h_dim[-1], 1))
         else:
@@ -37,7 +38,8 @@ class MLPVF(VF, nn.Module):
         self.to_log_features = False
         # Prepare for logging
         self.activations = {}
-        self.feature_keys = [self.v_net[i * 2 + 1] for i in range(len(h_dim))]
+        jump = 3 if self.layernorm else 2
+        self.feature_keys = [self.v_net[i * jump + 1] for i in range(len(h_dim))]
 
         def hook_fn(m, i, o):
             if self.to_log_features:

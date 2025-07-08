@@ -21,15 +21,19 @@ def net_init(net, orth=0, w_fac=1.0, b_fac=0.0):
         if hasattr(net[-1], 'bias'):
             net[-1].bias.data.mul_(b_fac)
 
-def fc_body(act_type, o_dim, h_dim, bias=True):
+def fc_body(act_type, o_dim, h_dim, bias=True, layernorm=False):
     activation = {'Tanh': nn.Tanh, 'ReLU': nn.ReLU, 'elu': nn.ELU, 'sigmoid':nn.Sigmoid}[act_type]
     module_list = nn.ModuleList()
     if len(h_dim) == 0:
         return module_list
     module_list.append(nn.Linear(o_dim, h_dim[0], bias=bias))
+    if layernorm:
+        module_list.append(nn.LayerNorm(h_dim[0], elementwise_affine=False))
     module_list.append(activation())
     for i in range(len(h_dim) - 1):
         module_list.append(nn.Linear(h_dim[i], h_dim[i + 1], bias=bias))
+        if layernorm:
+            module_list.append(nn.LayerNorm(h_dim[i + 1], elementwise_affine=False))
         module_list.append(activation())
     return module_list
 

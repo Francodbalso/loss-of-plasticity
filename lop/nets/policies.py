@@ -34,11 +34,12 @@ class Policy(object):
 
 class MLPPolicy(Policy, nn.Module):
     def __init__(self, o_dim, a_dim, act_type='Tanh', h_dim=(50,), log_std=0, device='cpu', init='kaiming', bias=True,
-                 std_dev=1e-1, output_tanh=False):
+                 std_dev=1e-1, output_tanh=False, layernorm=False):
         super().__init__()
         self.act_type = act_type
         self.device = device
-        mean_net = fc_body(act_type, o_dim, h_dim, bias=bias)
+        self.layernorm = layernorm
+        mean_net = fc_body(act_type, o_dim, h_dim, bias=bias, layernorm=layernorm)
         if len(h_dim) > 0:
             mean_net.append(nn.Linear(h_dim[-1], a_dim, bias=bias))
         else:
@@ -69,7 +70,8 @@ class MLPPolicy(Policy, nn.Module):
         """
         self.to_log_features = False
         self.activations = {}
-        self.feature_keys = [self.mean_net[i * 2 + 1] for i in range(len(h_dim))]
+        jump = 3 if self.layernorm else 2
+        self.feature_keys = [self.mean_net[i * jump + 1] for i in range(len(h_dim))]
 
         def hook_fn(m, i, o):
             if self.to_log_features:
