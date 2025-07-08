@@ -62,13 +62,14 @@ class PPO(Learner):
         Initialize a generate-and-test object for your network
         """
 
-        self.pol_gnt = GnT(net=self.pol.mean_net, hidden_activation=self.pol.act_type.lower(), opt=self.opt,
-                            replacement_rate=replacement_rate, decay_rate=decay_rate, init=init, device=device,
-                            maturity_threshold=mt, util_type=util_type_pol, loss_func='ppo')
-        self.val_gnt = GnT(net=self.vf.v_net, hidden_activation=self.vf.act_type.lower(), opt=self.opt,
-                            replacement_rate=replacement_rate, decay_rate=decay_rate, init=init,
-                            maturity_threshold=mt, util_type=util_type_val, loss_func=F.mse_loss,
-                            device=device)
+        if self.pgnt:
+            self.pol_gnt = GnT(net=self.pol.mean_net, hidden_activation=self.pol.act_type.lower(), opt=self.opt,
+                                replacement_rate=replacement_rate, decay_rate=decay_rate, init=init, device=device,
+                                maturity_threshold=mt, util_type=util_type_pol, loss_func='ppo')
+            self.val_gnt = GnT(net=self.vf.v_net, hidden_activation=self.vf.act_type.lower(), opt=self.opt,
+                                replacement_rate=replacement_rate, decay_rate=decay_rate, init=init,
+                                maturity_threshold=mt, util_type=util_type_val, loss_func=F.mse_loss,
+                                device=device)
         if redo:
             self.pol_gnt = GnTredo(net=self.pol.mean_net, hidden_activation=self.pol.act_type.lower(),
                                    threshold=threshold, device=device, init=init, reset_period=reset_period)

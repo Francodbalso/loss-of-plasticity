@@ -55,17 +55,22 @@ def bin_m_errs(errs, m=10000):
 
 def gaussian_init(net, std_dev=1e-1):
     for module in net:
-        if hasattr(module, 'weight'):
-            nn.init.normal_(module.weight, mean=0.0, std=std_dev)
-        if hasattr(module, 'bias'):
-            nn.init.normal_(module.bias, mean=0.0, std=std_dev)
+        if isinstance(module, nn.LayerNorm):
+            continue
+        else:
+            if hasattr(module, 'weight'):
+                nn.init.normal_(module.weight, mean=0.0, std=std_dev)
+            if hasattr(module, 'bias'):
+                nn.init.normal_(module.bias, mean=0.0, std=std_dev)
 
 
 def kaiming_init(net, act='relu', bias=True):
     if act == 'elu':
         act = 'relu'
     for module in net[:-1]:
-        if hasattr(module, 'weight'):
+        if isinstance(module, nn.LayerNorm):
+            continue
+        elif hasattr(module, 'weight'):
             nn.init.kaiming_uniform_(module.weight, nonlinearity=act.lower())
             if bias:
                 module.bias.data.fill_(0.0)
@@ -79,7 +84,9 @@ def xavier_init(net, act='tanh', bias=True):
         act = 'relu'
     gain = nn.init.calculate_gain(act.lower(), param=None)
     for module in net[:-1]:
-        if hasattr(module, 'weight'):
+        if isinstance(module, nn.LayerNorm):
+            continue
+        elif hasattr(module, 'weight'):
             nn.init.xavier_uniform_(module.weight, gain=gain)
             if bias:
                 module.bias.data.fill_(0.0)
@@ -90,7 +97,9 @@ def xavier_init(net, act='tanh', bias=True):
 
 def lecun_init(net, bias=True):
     for module in net[:-1]:
-        if hasattr(module, 'weight'):
+        if isinstance(module, nn.LayerNorm):
+            continue
+        elif hasattr(module, 'weight'):
             new_bound = math.sqrt(3/module.in_features)
             nn.init.uniform_(module.weight, a=-new_bound, b=new_bound)
             if bias:
